@@ -13,7 +13,7 @@ class Teacher(db.Model):
     teacher_name = db.Column(db.String(100))
     
     # defining the interrelationships
-    subjects = db.relationship('Subject', back_populates='teacher', cascade='all, delete-orphan')
+    # subjects = db.relationship('Subject', back_populates='teacher', cascade='all, delete-orphan')
     
 # defines the fields we want to be returned (deserialized) from the database
 class TeacherSchema(ma.Schema):

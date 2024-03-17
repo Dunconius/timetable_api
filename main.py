@@ -1,9 +1,13 @@
 import os
 from flask import Flask
-#this allows us to handle all the errors at 1 point instead of using try-except everywhere
 from marshmallow.exceptions import ValidationError
-
 from init import db, ma, bcrypt, jwt
+
+# Import SQLAlchemy models and relationships
+#from models.teacher import Teacher
+#from models.subject import Subject
+# Import the file that defines relationships
+#from relationships.relationships import *
 
 def create_app():
     app = Flask(__name__)
@@ -35,6 +39,9 @@ def create_app():
         return {"error": err.messages}, 400
     
     # importing from the controllers file. Registered the blueprint with the flask app instance
-    from 
+    from controllers.teacher_controller import teachers_bp
+    app.register_blueprint(teachers_bp)
+
+    from controllers.
     
     return app
