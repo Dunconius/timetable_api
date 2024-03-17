@@ -12,7 +12,6 @@ from models.subject import Subject
 from models.teacher import Teacher
 from models.time_slot import TimeSlot
 from models.user import User
-# from models.comment import Comment
 
 # now we create the blueprint
 db_commands = Blueprint('db', __name__)
@@ -29,6 +28,7 @@ def drop_tables():
 
 @db_commands.cli.command('seed')
 def seed_tables():
+    # seeding tables that don't require foreign keys
     users = [
         User(
             email="admin@email.com",
@@ -45,15 +45,12 @@ def seed_tables():
 
     cohorts = [
         Cohort(
-            cohort_id="01",
             year_group="2022"
         ),
         Cohort(
-            cohort_id="02",
             year_group="2023"
         ),
         Cohort(
-            cohort_id="03",
             year_group="2024"
         ),
     ]
@@ -61,44 +58,21 @@ def seed_tables():
 
     rooms = [
         Room(
-            room_id="G01"
+            room_id="G01",
+            building_number="G",
+            room_number="01"
         ),
         Room(
-            room_id="G02"
-        ),
-        Room(
-            room_id="G03"
+            room_id="G02",
+            building_number="G",
+            room_number="02"
+        ),Room(
+            room_id="G03",
+            building_number="G",
+            room_number="03"
         ),
     ]
     db.session.add_all(rooms)
-
-    subjects = [
-        Subject(
-            subject_year="first year",
-            subject_name="maths"
-        ),
-        Subject(
-            subject_year="second year",
-            subject_name="maths"
-        ),
-        Subject(
-            subject_year="third year",
-            subject_name="maths"
-        ),
-        Subject(
-            subject_year="first year",
-            subject_name="science"
-        ),
-        Subject(
-            subject_year="second year",
-            subject_name="science"
-        ),
-        Subject(
-            subject_year="third year",
-            subject_name="english"
-        ),
-    ]
-    db.session.add_all(subjects)
 
     teachers = [
         Teacher(
@@ -118,6 +92,7 @@ def seed_tables():
 
     time_slots = [
         TimeSlot(
+            time_slot_id=1,
             time_slot_day="Monday",
             time_slot_time="Morning"
         ),
@@ -159,16 +134,32 @@ def seed_tables():
         ),
     ]
     db.session.add_all(time_slots)
+    # committing all seeds that don't require foreign keys
+    db.session.commit()
 
-    
-    # seed schedules LAST as it has a lot of foreign keys that must be seeded first
+    # seeding first tier of foreign key tables
+    subjects = [
+        Subject(
+            subject_year="first year",
+            subject_name="maths",
+            cohort_id=cohorts[0].cohort_id,
+            teacher_id=teachers[0].teacher_id
+        )
+    ]
+    db.session.add_all(subjects)
+    # committing first tier of foreign key tables
+    db.session.commit()
+
+    # seeding second tier of foreign key tables
     schedules = [
         Schedule(
-            
-        ),
+            subject_id=subjects[0].subject_id,
+            room_id='G01',
+            time_slot_id=[0].time_slot_id
+        )
     ]
     db.session.add_all(schedules)
-
+    # committing second tier of foreign key tables
     db.session.commit()
 
     print("Tables seeded")

@@ -34,4 +34,7 @@ def create_app():
     def validation_error(err):
         return {"error": err.messages}, 400
     
+    # importing from the controllers file. Registered the blueprint with the flask app instance
+    from 
+    
     return app

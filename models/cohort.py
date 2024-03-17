@@ -13,7 +13,7 @@ class Cohort(db.Model):
     year_group = db.Column(db.String)
     
     # defining the interrelationships
-    # classes = db.relationship('Class', back_populates='room')
+    subjects = db.relationship('Subject', back_populates='cohort', cascade='all, delete-orphan')  # Assuming a cohort can have multiple Schedules
     
 # defines the fields we want to be returned (deserialized) from the database
 class CohortSchema(ma.Schema):

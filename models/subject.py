@@ -14,12 +14,14 @@ class Subject(db.Model):
     subject_name = db.Column(db.String)
     
     # foreign fields --------------------------- table/column they come from
-    cohort_id = db.Column(db.Integer, db.ForeignKey("cohorts.cohort_id"), nullable=False)
-    teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.teacher_id"), nullable=False)
+    cohort_id = db.Column(db.Integer, db.ForeignKey("cohorts.cohort_id"))
+    teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.teacher_id"))
 
     # interrelationships --- From table name --------- to this table
     cohort = db.relationship('Cohort', back_populates='subjects')
     teacher = db.relationship('Teacher', back_populates='subjects')
+    
+    schedules = db.relationship('Schedule', back_populates='subject', cascade='all, delete-orphan')  # Assuming a Subject can have multiple Schedules
     
 # defines the fields we want to be returned (deserialized) from the database
 class SubjectSchema(ma.Schema):

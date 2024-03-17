@@ -9,12 +9,12 @@ class TimeSlot(db.Model):
     __tablename__ = 'time_slots'
 
     # defining the native fields for this table
-    time_slot_id = db.Column(db.String(5), primary_key=True)
+    time_slot_id = db.Column(db.Integer, primary_key=True)
     time_slot_day = db.Column(db.String)
     time_slot_time = db.Column(db.String)
 
     # back_populates for defining the interrelationships
-    # classes = db.relationship('Class', back_populates='room')
+    schedules = db.relationship('Schedule', back_populates='time_slot', cascade='all, delete-orphan')  # Assuming a Time_slot can have multiple Schedules
     
 class TimeSlotSchema(ma.Schema):
     class Meta:
