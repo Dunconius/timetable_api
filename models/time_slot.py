@@ -9,7 +9,7 @@ class TimeSlot(db.Model):
     __tablename__ = 'time_slots'
 
     # defining the native fields for this table
-    time_slot_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     time_slot_day = db.Column(db.String)
     time_slot_time = db.Column(db.String)
 
@@ -18,7 +18,7 @@ class TimeSlot(db.Model):
     
 class TimeSlotSchema(ma.Schema):
     class Meta:
-        fields = ('time_slot_id', 'time_slot_day', 'time_slot_time')
+        fields = ('id', 'time_slot_day', 'time_slot_time')
 
 time_slot_schema = TimeSlotSchema()
 time_slots_schema = TimeSlotSchema(many=True)

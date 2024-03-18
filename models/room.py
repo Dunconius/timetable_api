@@ -9,7 +9,7 @@ class Room(db.Model):
     __tablename__ = 'rooms'
 
     # defining the native fields for this table
-    room_id = db.Column(db.String(5), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     building_number = db.Column(db.String(1))
     room_number = db.Column(db.Integer)
 
@@ -19,7 +19,7 @@ class Room(db.Model):
     
 class RoomSchema(ma.Schema):
     class Meta:
-        fields = ('room_id', 'building_number', 'room_number')
+        fields = ('id', 'building_number', 'room_number')
 
 room_schema = RoomSchema()
 rooms_schema = RoomSchema(many=True)

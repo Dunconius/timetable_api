@@ -18,16 +18,19 @@ db_commands = Blueprint('db', __name__)
 
 @db_commands.cli.command('create')
 def create_tables():
+    print("Creating tables...")
     db.create_all()
     print("Tables create")
 
 @db_commands.cli.command('drop')
 def drop_tables():
+    print("Dropping tables...")
     db.drop_all()
     print("Tables dropped")
 
 @db_commands.cli.command('seed')
 def seed_tables():
+    print("Seeding tables...")
     # seeding tables that don't require foreign keys
     users = [
         User(
@@ -58,16 +61,13 @@ def seed_tables():
 
     rooms = [
         Room(
-            room_id="G01",
             building_number="G",
             room_number="01"
         ),
         Room(
-            room_id="G02",
             building_number="G",
             room_number="02"
         ),Room(
-            room_id="G03",
             building_number="G",
             room_number="03"
         ),
@@ -92,7 +92,6 @@ def seed_tables():
 
     time_slots = [
         TimeSlot(
-            time_slot_id=1,
             time_slot_day="Monday",
             time_slot_time="Morning"
         ),
@@ -142,8 +141,8 @@ def seed_tables():
         Subject(
             subject_year="first year",
             subject_name="maths",
-            cohort_id=cohorts[0].cohort_id,
-            teacher_id=teachers[0].teacher_id
+            cohort_id=cohorts[0].id,
+            teacher_id=teachers[0].id
         )
     ]
     db.session.add_all(subjects)
@@ -153,9 +152,9 @@ def seed_tables():
     # seeding second tier of foreign key tables
     schedules = [
         Schedule(
-            subject_id=subjects[0].subject_id,
-            room_id='G01',
-            time_slot_id=[0].time_slot_id
+            subject_id=subjects[0].id,
+            room_id=rooms[0].id,
+            time_slot_id=time_slots[0].id
         )
     ]
     db.session.add_all(schedules)

@@ -9,24 +9,27 @@ class Subject(db.Model):
     __tablename__ = 'subjects'
 
     # defining the native fields for this table
-    subject_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     subject_year = db.Column(db.String)
     subject_name = db.Column(db.String)
+
+    # Add the back-reference to Schedule
+    schedules = db.relationship('Schedule', back_populates='subject')
     
     # foreign fields --------------------------- table/column they come from
-    cohort_id = db.Column(db.Integer, db.ForeignKey("cohorts.cohort_id"))
-    teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.teacher_id"))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
+    cohort_id = db.Column(db.Integer, db.ForeignKey('cohorts.id'))
 
-    # interrelationships --- From table name --------- to this table
-    cohort = db.relationship('Cohort', back_populates='subjects')
+    # Define the relationship with Teacher
     teacher = db.relationship('Teacher', back_populates='subjects')
+    cohort = db.relationship('Cohort', back_populates='subjects')
+    #schedule = db.relationship('Schedule', back_populates='subject')
     
-    schedules = db.relationship('Schedule', back_populates='subject', cascade='all, delete-orphan')  # Assuming a Subject can have multiple Schedules
     
 # defines the fields we want to be returned (deserialized) from the database
 class SubjectSchema(ma.Schema):
     class Meta:
-        fields = ('subject_id', 'subject_year', 'subject_name')
+        fields = ('id', 'subject_year', 'subject_name')
 
 subject_schema = SubjectSchema()
 subjects_schema = SubjectSchema(many=True)

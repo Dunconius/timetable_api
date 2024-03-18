@@ -4,8 +4,12 @@ from marshmallow.exceptions import ValidationError
 from init import db, ma, bcrypt, jwt
 
 # Import SQLAlchemy models and relationships
-#from models.teacher import Teacher
-#from models.subject import Subject
+from models.teacher import Teacher
+from models.cohort import Cohort
+from models.time_slot import TimeSlot
+from models.room import Room
+from models.subject import Subject
+from models.schedule import Schedule
 # Import the file that defines relationships
 #from relationships.relationships import *
 
@@ -39,9 +43,13 @@ def create_app():
         return {"error": err.messages}, 400
     
     # importing from the controllers file. Registered the blueprint with the flask app instance
+    from controllers.cli_controller import db_commands
+    app.register_blueprint(db_commands)
+    
     from controllers.teacher_controller import teachers_bp
     app.register_blueprint(teachers_bp)
 
-    from controllers.
+    from controllers.subject_controller import subjects_bp
+    app.register_blueprint(subjects_bp)
     
     return app
