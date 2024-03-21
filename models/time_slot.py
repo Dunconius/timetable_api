@@ -14,7 +14,7 @@ class TimeSlot(db.Model):
     time_slot_time = db.Column(db.String)
 
     # back_populates for defining the interrelationships
-    bookings = db.relationship('Booking', back_populates='time_slot', cascade='all, delete-orphan')  # Assuming a Time_slot can have multiple bookings
+    bookings = db.relationship('Booking', back_populates='time_slot', cascade='all, delete-orphan')
     
 class TimeSlotSchema(ma.Schema):
     class Meta:

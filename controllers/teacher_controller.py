@@ -8,25 +8,6 @@ from models.subject import Subject, subject_schema, subjects_schema
 teachers_bp = Blueprint('teachers', __name__, url_prefix='/teachers')
 
 # get ALL teachers - GET
-'''@teachers_bp.route('/')
-def get_all_teachers():
-    stmt = db.select(Teacher)
-    teachers = db.session.scalars(stmt)
-    return teachers_schema.dump(teachers)'''
-
-# get ONE teacher (dynamic route) and show the classes they're teaching - GET
-'''
-@teachers_bp.route('/<int:teacher_id>')
-def get_one_teacher(teacher_id):
-    stmt = db.select(Teacher).filter_by(id=teacher_id)
-    teacher = db.session.scalar(stmt)
-
-    if teacher:
-        return teacher_schema.dump(teacher)
-    else:
-        return {"error": f"Teacher {teacher_id} not found"}, 404
-        '''
-# get ALL teachers - GET
 @teachers_bp.route('/', methods=['GET'])
 def get_all_teachers():
     teachers = Teacher.query.all()

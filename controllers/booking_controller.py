@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from init import db
 
 from models.booking import Booking, booking_schema, bookings_schema
+from models.room import Room, room_schema, rooms_schema
 
 bookings_bp = Blueprint('bookings', __name__, url_prefix='/bookings')
 
@@ -17,7 +18,10 @@ def get_all_bookings():
 @bookings_bp.route('/<int:booking_id>')
 def get_one_booking(booking_id):
     booking = Booking.query.get_or_404(booking_id)
+
+    rooms = [room_schema.dump(room) for room in booking.rooms]
     
     return {
-        "Booking": booking_schema.dump(booking)
+        "Booking": booking_schema.dump(booking),
+        "room": rooms
     }

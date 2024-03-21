@@ -13,9 +13,8 @@ class Room(db.Model):
     building_number = db.Column(db.String(1))
     room_number = db.Column(db.Integer)
 
-
     # defining the interrelationships
-    bookings = db.relationship('Booking', back_populates='room', cascade='all, delete-orphan')  # Assuming a Room can have multiple bookings
+    bookings = db.relationship('Booking', back_populates='room', cascade='all, delete-orphan')
     
 class RoomSchema(ma.Schema):
     class Meta:

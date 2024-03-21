@@ -18,7 +18,7 @@ class Booking(db.Model):
 
     # interrelationships --- From class name --------- to this class
     subject = db.relationship('Subject', back_populates='bookings')
-    room = db.relationship('Room', back_populates='bookings')
+    rooms = db.relationship('Room', back_populates='bookings')
     time_slot = db.relationship('TimeSlot', back_populates='bookings')
     
 class BookingSchema(ma.Schema):
