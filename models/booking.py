@@ -23,7 +23,7 @@ class Booking(db.Model):
     
 class BookingSchema(ma.Schema):
     class Meta:
-        model = booking
+        model = Booking
         include_fk = True  # Include foreign keys in the schema
 
 booking_schema = BookingSchema()

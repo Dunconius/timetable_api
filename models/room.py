@@ -15,7 +15,7 @@ class Room(db.Model):
 
 
     # defining the interrelationships
-    bookings = db.relationship('booking', back_populates='room', cascade='all, delete-orphan')  # Assuming a Room can have multiple bookings
+    bookings = db.relationship('Booking', back_populates='room', cascade='all, delete-orphan')  # Assuming a Room can have multiple bookings
     
 class RoomSchema(ma.Schema):
     class Meta:

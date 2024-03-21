@@ -9,7 +9,7 @@ from models.cohort import Cohort
 from models.time_slot import TimeSlot
 from models.room import Room
 from models.subject import Subject
-from models.booking import booking
+from models.booking import Booking
 # Import the file that defines relationships
 #from relationships.relationships import *
 
