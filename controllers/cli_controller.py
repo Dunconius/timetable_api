@@ -143,6 +143,18 @@ def seed_tables():
             subject_name="maths",
             cohort_id=cohorts[0].id,
             teacher_id=teachers[0].id
+        ),
+        Subject(
+            subject_year="second year",
+            subject_name="maths",
+            cohort_id=cohorts[1].id,
+            teacher_id=teachers[2].id
+        ),
+        Subject(
+            subject_year="first year",
+            subject_name="science",
+            cohort_id=cohorts[0].id,
+            teacher_id=teachers[1].id
         )
     ]
     db.session.add_all(subjects)
@@ -155,6 +167,16 @@ def seed_tables():
             subject_id=subjects[0].id,
             room_id=rooms[0].id,
             time_slot_id=time_slots[0].id
+        ),
+        Schedule(
+            subject_id=subjects[1].id,
+            room_id=rooms[1].id,
+            time_slot_id=time_slots[1].id
+        ),
+        Schedule(
+            subject_id=subjects[2].id,
+            room_id=rooms[2].id,
+            time_slot_id=time_slots[2].id
         )
     ]
     db.session.add_all(schedules)
