@@ -13,8 +13,8 @@ class Subject(db.Model):
     subject_year = db.Column(db.String)
     subject_name = db.Column(db.String)
 
-    # Add the back-reference to Schedule
-    schedules = db.relationship('Schedule', back_populates='subject')
+    # Add the back-reference to booking
+    bookings = db.relationship('booking', back_populates='subject')
     
     # foreign fields --------------------------- table/column they come from
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
@@ -23,7 +23,7 @@ class Subject(db.Model):
     # Define the relationship with Teacher
     teacher = db.relationship('Teacher', back_populates='subjects')
     cohort = db.relationship('Cohort', back_populates='subjects')
-    #schedule = db.relationship('Schedule', back_populates='subject')
+    #booking = db.relationship('booking', back_populates='subject')
     
     
 # defines the fields we want to be returned (deserialized) from the database

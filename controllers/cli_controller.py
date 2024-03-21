@@ -7,7 +7,7 @@ from flask import Blueprint
 from init import db, bcrypt
 from models.cohort import Cohort
 from models.room import Room
-from models.schedule import Schedule
+from models.booking import booking
 from models.subject import Subject
 from models.teacher import Teacher
 from models.time_slot import TimeSlot
@@ -162,24 +162,24 @@ def seed_tables():
     db.session.commit()
 
     # seeding second tier of foreign key tables
-    schedules = [
-        Schedule(
+    bookings = [
+        booking(
             subject_id=subjects[0].id,
             room_id=rooms[0].id,
             time_slot_id=time_slots[0].id
         ),
-        Schedule(
+        booking(
             subject_id=subjects[1].id,
             room_id=rooms[1].id,
             time_slot_id=time_slots[1].id
         ),
-        Schedule(
+        booking(
             subject_id=subjects[2].id,
             room_id=rooms[2].id,
             time_slot_id=time_slots[2].id
         )
     ]
-    db.session.add_all(schedules)
+    db.session.add_all(bookings)
     # committing second tier of foreign key tables
     db.session.commit()
 

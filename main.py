@@ -9,7 +9,7 @@ from models.cohort import Cohort
 from models.time_slot import TimeSlot
 from models.room import Room
 from models.subject import Subject
-from models.schedule import Schedule
+from models.booking import booking
 # Import the file that defines relationships
 #from relationships.relationships import *
 
@@ -60,5 +60,8 @@ def create_app():
 
     from controllers.rooms_controller import rooms_bp
     app.register_blueprint(rooms_bp)
+
+    from controllers.booking_controller import bookings_bp
+    app.register_blueprint(bookings_bp)
     
     return app

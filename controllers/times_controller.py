@@ -15,7 +15,7 @@ def get_all_times():
     time_slots_list = [{'id': time_slot.id, 'Day': time_slot.time_slot_day, 'Time': time_slot.time_slot_time} for time_slot in time_slots]
     return jsonify({'timeslots': time_slots_list})
 
-# get ONE time slot and show schedules that time.
+# get ONE time slot and show bookings that time.
 @time_slots_bp.route('/<int:time_slot_id>')
 def get_one_timeslot(time_slot_id):
     time_slot = TimeSlot.query.get_or_404(time_slot_id)
