@@ -11,11 +11,10 @@ class Cohort(db.Model):
     # defining the native fields for this table
     id = db.Column(db.Integer, primary_key=True)
     year_group = db.Column(db.String)
-    
+
     # defining the interrelationships
     subjects = db.relationship('Subject', back_populates='cohort')
-    
-    
+
 # defines the fields we want to be returned (deserialized) from the database
 class CohortSchema(ma.Schema):
     class Meta:

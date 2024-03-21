@@ -1,26 +1,28 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from init import db
-from models.subject import Subject, subject_schema, subjects_schema
-from models.teacher import Teacher, teacher_schema, teachers_schema
 from models.cohort import Cohort, cohort_schema, cohorts_schema
-from controllers.teacher_controller import teachers_bp
+from models.subject import Subject, subject_schema, subjects_schema
+from controllers.subject_controller import subjects_bp
+
 
 cohorts_bp = Blueprint('cohorts', __name__, url_prefix='/cohorts')
-cohorts_bp.register_blueprint(cohorts_bp)
 
 # get ALL cohorts - GET
-@cohorts_bp.route('/')
+@cohorts_bp.route('/', methods=['GET'])
 def get_all_cohorts():
     cohorts = Cohort.query.all()
-    return cohorts_schema.dump(cohorts)
+    cohorts_list = [{"id": cohort.id, "Year Group": cohort.year_group} for cohort in cohorts]
+    return jsonify({"cohorts": cohorts_list})
+
+# get ONE cohort (dynamic route) and show all it's subjects - GET
+@cohorts_bp.route('/<int:cohort_id>')
+def get_one_cohort(cohort_id):
+    cohort = Cohort.query.get_or_404(cohort_id)
     
-    # stmt = db.select(Cohort)
-    # cohorts = db.session.scalars(stmt)
-    # return cohorts_schema.dump(cohorts)
-    
-    
-    
-    # cohorts = Cohort.query.all()
-    # cohorts_list = [{"id": cohort.id, "name": cohort.year_group} for cohort in cohorts]
-    # return jsonify({"cohorts": cohorts_list})
+    subjects = [subject_schema.dump(subject) for subject in cohort.subjects]
+
+    return {
+        "cohort": cohort_schema.dump(cohort),
+        "subject": subjects       
+    }

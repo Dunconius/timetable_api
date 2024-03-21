@@ -12,9 +12,6 @@ class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     teacher_name = db.Column(db.String(100))
 
-    # foreign fields --------------------------- table/column they come from
-    # subject_id = db.Column(db.Integer, db.ForeignKey("subjects.id"))
-    
     # defining the interrelationships
     subjects = db.relationship('Subject', back_populates='teacher')
     

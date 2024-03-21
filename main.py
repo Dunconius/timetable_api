@@ -51,5 +51,14 @@ def create_app():
 
     from controllers.subject_controller import subjects_bp
     app.register_blueprint(subjects_bp)
+
+    from controllers.cohort_controller import cohorts_bp
+    app.register_blueprint(cohorts_bp)
+
+    from controllers.times_controller import time_slots_bp
+    app.register_blueprint(time_slots_bp)
+
+    from controllers.rooms_controller import rooms_bp
+    app.register_blueprint(rooms_bp)
     
     return app
