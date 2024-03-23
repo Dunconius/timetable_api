@@ -23,7 +23,6 @@ class Subject(db.Model):
     # Define the relationship with Teacher
     teacher = db.relationship('Teacher', back_populates='subjects')
     cohort = db.relationship('Cohort', back_populates='subjects')
-    booking = db.relationship('Booking', back_populates='subject')
     
     
 # defines the fields we want to be returned (deserialized) from the database
@@ -31,5 +30,10 @@ class SubjectSchema(ma.Schema):
     class Meta:
         fields = ('id', 'subject_year', 'subject_name')
 
+class SubjectBookingSchema(ma.Schema):
+    class Meta:
+        fields = ('subject_year', 'subject_name')
+
 subject_schema = SubjectSchema()
 subjects_schema = SubjectSchema(many=True)
+subject_booking_schema = SubjectBookingSchema()

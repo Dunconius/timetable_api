@@ -26,3 +26,43 @@ def get_one_cohort(cohort_id):
         "cohort": cohort_schema.dump(cohort),
         "subject": subjects       
     }
+
+# CREATE new cohort
+@cohorts_bp.route('/', methods=['POST'])
+def add_cohort():
+    body_data = cohort_schema.load(request.get_json())
+
+    cohort = Cohort(
+        year_group = body_data.get('year_group')
+    )
+    db.session.add(cohort)
+    db.session.commit()
+
+    return cohort_schema.dump(cohort), 201
+
+# DELETE cohort
+@cohorts_bp.route('/<int:cohort_id>', methods=['DELETE'])
+def delete_cohort(cohort_id):
+    stmt = db.select(Cohort).where(Cohort.id == cohort_id)
+    cohort = db.session.scalar(stmt)
+
+    if cohort:
+        db.session.delete(cohort)
+        db.session.commit()
+        return {'message': f'Cohort ID:{cohort.id} year:{cohort.year_group} deleted successfully'}
+    else:
+        return {'error': f'Cohort ID:{cohort_id} not found'}, 404
+    
+# UPDATE cohort
+@cohorts_bp.route('/<int:cohort_id>', methods=['PUT', 'PATCH'])
+def update_cohort(cohort_id):
+    body_data = cohort_schema.load(request.get_json(), partial=True)
+    stmt = db.select(Cohort).filter_by(id=cohort_id)
+    cohort = db.session.scalar(stmt)
+
+    if cohort:
+        cohort.year_group = body_data.get('year_group') or cohort.year_group
+        db.session.commit()
+        return cohort_schema.dump(cohort)
+    else:
+        return {'error': f'Cohort ID:{cohort_id} not found'}, 404

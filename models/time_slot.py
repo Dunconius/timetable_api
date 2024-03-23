@@ -20,5 +20,10 @@ class TimeSlotSchema(ma.Schema):
     class Meta:
         fields = ('id', 'time_slot_day', 'time_slot_time')
 
+class TimeBookingSchema(ma.Schema):
+    class Meta:
+        fields = ('time_slot_day', 'time_slot_time')
+
 time_slot_schema = TimeSlotSchema()
 time_slots_schema = TimeSlotSchema(many=True)
+time_slot_booking_schema = TimeBookingSchema()

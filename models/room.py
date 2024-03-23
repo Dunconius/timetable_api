@@ -20,5 +20,10 @@ class RoomSchema(ma.Schema):
     class Meta:
         fields = ('id', 'building_number', 'room_number')
 
+class RoomBookingSchema(ma.Schema):
+    class Meta:
+        fields = ('building_number', 'room_number')
+
 room_schema = RoomSchema()
 rooms_schema = RoomSchema(many=True)
+room_booking_schema = RoomBookingSchema()

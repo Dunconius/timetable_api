@@ -18,13 +18,30 @@ class Booking(db.Model):
 
     # interrelationships --- From class name --------- to this class
     subject = db.relationship('Subject', back_populates='bookings')
-    rooms = db.relationship('Room', back_populates='bookings')
+    room = db.relationship('Room', back_populates='bookings')
     time_slot = db.relationship('TimeSlot', back_populates='bookings')
     
-class BookingSchema(ma.Schema):
+'''class BookingSchema(ma.Schema):
     class Meta:
         model = Booking
         include_fk = True  # Include foreign keys in the schema
 
+booking_schema = BookingSchema()
+bookings_schema = BookingSchema(many=True)'''
+
+# Define the Booking schema with nested fields for related models
+class BookingSchema(ma.Schema):
+    id = fields.Int(dump_only=True)  # Example: Include 'id' field
+
+    # Define nested fields for related models
+    room = fields.Nested('RoomSchema', only=('building_number', 'room_number'))
+    subject = fields.Nested('SubjectSchema', only=('subject_year', 'subject_name'))
+    time_slot = fields.Nested('TimeSlotSchema', only=('time_slot_day', 'time_slot_time'))
+
+    class Meta:
+        model = Booking
+        include_fk = True  # Include foreign keys in the schema
+
+# Create an instance of BookingSchema for single objects and multiple objects
 booking_schema = BookingSchema()
 bookings_schema = BookingSchema(many=True)
