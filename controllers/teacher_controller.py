@@ -3,7 +3,6 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import asc
 
 from init import db
-
 from models.teacher import Teacher, teacher_schema
 from models.subject import Subject, subject_schema
 from models.booking import Booking, booking_schema

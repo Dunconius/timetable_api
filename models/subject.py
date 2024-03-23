@@ -13,13 +13,13 @@ class Subject(db.Model):
     subject_year = db.Column(db.String)
     subject_name = db.Column(db.String)
 
-    # Add the back-reference to booking
-    bookings = db.relationship('Booking', back_populates='subject')
-    
     # foreign fields --------------------------- table/column they come from
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
     cohort_id = db.Column(db.Integer, db.ForeignKey('cohorts.id'))
 
+    # Add the back-reference to booking
+    bookings = db.relationship('Booking', back_populates='subject')
+    
     # Define the relationship with Teacher
     teacher = db.relationship('Teacher', back_populates='subjects')
     cohort = db.relationship('Cohort', back_populates='subjects')

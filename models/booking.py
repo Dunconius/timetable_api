@@ -21,22 +21,20 @@ class Booking(db.Model):
     room = db.relationship('Room', back_populates='bookings')
     time_slot = db.relationship('TimeSlot', back_populates='bookings')
     
-'''class BookingSchema(ma.Schema):
-    class Meta:
-        model = Booking
-        include_fk = True  # Include foreign keys in the schema
 
-booking_schema = BookingSchema()
-bookings_schema = BookingSchema(many=True)'''
 
 # Define the Booking schema with nested fields for related models
 class BookingSchema(ma.Schema):
     id = fields.Int(dump_only=True)  # Example: Include 'id' field
 
-    # Define nested fields for related models
-    room = fields.Nested('RoomSchema', only=('building_number', 'room_number'))
-    subject = fields.Nested('SubjectSchema', only=('subject_year', 'subject_name'))
-    time_slot = fields.Nested('TimeSlotSchema', only=('time_slot_day', 'time_slot_time'))
+    subject_id = fields.Int(required=True)
+    room_id = fields.Int(required=True)
+    time_slot_id = fields.Int(required=True)
+
+    # # Define nested fields for related models
+    # room = fields.Nested('RoomSchema', only=('building_number', 'room_number'))
+    # subject = fields.Nested('SubjectSchema', only=('subject_year', 'subject_name'))
+    # time_slot = fields.Nested('TimeSlotSchema', only=('time_slot_day', 'time_slot_time'))
 
     class Meta:
         model = Booking
