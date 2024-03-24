@@ -27,11 +27,12 @@ def get_one_cohort(cohort_id):
         "subject": subjects       
     }
 
-# CREATE new cohort
+# CREATE new cohort # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
 @cohorts_bp.route('/', methods=['POST'])
 def add_cohort():
     body_data = cohort_schema.load(request.get_json())
-
+    # ADD IN SUCCESS MESSAGE!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
     cohort = Cohort(
         year_group = body_data.get('year_group')
     )
@@ -40,7 +41,7 @@ def add_cohort():
 
     return cohort_schema.dump(cohort), 201
 
-# DELETE cohort
+# DELETE cohort # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
 @cohorts_bp.route('/<int:cohort_id>', methods=['DELETE'])
 def delete_cohort(cohort_id):
     stmt = db.select(Cohort).where(Cohort.id == cohort_id)
@@ -53,7 +54,7 @@ def delete_cohort(cohort_id):
     else:
         return {'error': f'Cohort ID:{cohort_id} not found'}, 404
     
-# UPDATE cohort
+# UPDATE cohort # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
 @cohorts_bp.route('/<int:cohort_id>', methods=['PUT', 'PATCH'])
 def update_cohort(cohort_id):
     body_data = cohort_schema.load(request.get_json(), partial=True)

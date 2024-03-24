@@ -27,7 +27,7 @@ def get_all_bookings():
 
     return jsonify({'bookings': serialized_bookings})
 
-# get ONE booking
+# get ONE booking MAKE THIS RETURN THE SUBJECT NAME, ROOM NUMBER, AND TIME INSTEAD OF IDs
 @bookings_bp.route('/<int:booking_id>')
 def get_one_booking(booking_id):
     booking = Booking.query.options(
@@ -50,10 +50,18 @@ def get_one_booking(booking_id):
 def add_booking():
     body_data = booking_schema.load(request.get_json())
 
+    room_id = body_data.get('room_id')
+    time_slot_id = body_data.get('time_slot_id')
+
+    # Check if a booking with the same room_id and time_slot_id already exists
+    existing_booking = Booking.query.filter_by(room_id=room_id, time_slot_id=time_slot_id).first()
+    if existing_booking:
+        return jsonify({'error': 'Booking already exists for this room and time slot.'}), 400
+
     booking = Booking(
         subject_id=body_data.get('subject_id'),
-        room_id=body_data.get('room_id'),
-        time_slot_id=body_data.get('time_slot_id')
+        room_id=room_id,
+        time_slot_id=time_slot_id
     )
 
     db.session.add(booking)

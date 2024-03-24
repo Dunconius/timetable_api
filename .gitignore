@@ -1,5 +1,5 @@
 __pycache__
 .venv
 .env
-temp.py
-.chatGPTmodels.py
+.readme
+.workbook

@@ -13,6 +13,7 @@ def get_all_rooms():
     return jsonify({'rooms': rooms_list})
 
 # get ONE time slot and show bookings that time.
+# NEED TO ADD BOOKINGS!!!!!!!!!!!!!!!
 @rooms_bp.route('/<int:room_id>')
 def get_one_room(room_id):
     room = Room.query.get_or_404(room_id)

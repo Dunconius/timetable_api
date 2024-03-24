@@ -14,6 +14,7 @@ def get_all_subjects():
     return subjects_schema.dump(subjects)
 
 # get ONE subject (dynamic route) and show its cohort and teacher - GET
+# ADD ERROR HANDLING
 @subjects_bp.route('/<int:subject_id>')
 def get_one_subject(subject_id):
     subject = Subject.query.get_or_404(subject_id)

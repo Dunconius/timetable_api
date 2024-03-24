@@ -67,7 +67,7 @@ def get_one_teacher(teacher_id):
     })
 
     
-# create teacher (admin only) - POST
+# create teacher (admin only) - POST # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
 @teachers_bp.route('/', methods=['POST'])
 def add_teacher():
     body_data = teacher_schema.load(request.get_json())
@@ -85,7 +85,7 @@ def add_teacher():
         "teacher": teacher_schema.dump(teacher)
      }), 201
 
-# delete teacher (admin only) - DELETE
+# delete teacher (admin only) - DELETE # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
 @teachers_bp.route('/<int:teacher_id>', methods=['DELETE'])
 def delete_teacher(teacher_id):
     stmt = db.select(Teacher).where(Teacher.id == teacher_id)
@@ -98,7 +98,7 @@ def delete_teacher(teacher_id):
     else:
         return {'error': f'Teacher ID:{teacher_id} not found'}, 404
 
-# edit teacher (admin only) - PUT, PATCH
+# edit teacher (admin only) - PUT, PATCH # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
 @teachers_bp.route('/<int:teacher_id>', methods=['PUT', 'PATCH'])
 def update_teacher(teacher_id):
     body_data = teacher_schema.load(request.get_json(), partial=True)

@@ -22,7 +22,7 @@ class Booking(db.Model):
     time_slot = db.relationship('TimeSlot', back_populates='bookings')
     
     __table_args__ = (
-        db.UniqueConstraint('room_id', 'time_slot_id'),
+        db.UniqueConstraint(room_id, time_slot_id),
     )
 
 # Define the Booking schema with nested fields for related models
