@@ -7,68 +7,75 @@ from models.teacher import Teacher, teacher_schema
 from models.subject import Subject, subject_schema
 from models.booking import Booking, booking_schema
 
+#bits for admin authorization
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from controllers.auth_utils import check_admin
+
 teachers_bp = Blueprint('teachers', __name__, url_prefix='/teachers')
 
-# get ALL teachers - GET
+# Gets all teachers and returns their id and name.
 @teachers_bp.route('/', methods=['GET'])
 def get_all_teachers():
     teachers = Teacher.query.all()
     teachers_list = [{"id": teacher.id, "name": teacher.teacher_name} for teacher in teachers]
     return jsonify({"teachers": teachers_list})
 
-# get ONE teacher (dynamic route), show the classes they're teaching, and the times/rooms for those classes - GET
+# Gets one teacher and returns all the subjects their assigned to and their bookings details. Requires the teacher_id in dynamic route
 @teachers_bp.route('/<int:teacher_id>')
 def get_one_teacher(teacher_id):
-    teacher = Teacher.query.get_or_404(teacher_id)
+    teacher = Teacher.query.get(teacher_id)
 
-    # Access the related subjects through the teacher's subjects relationship
-    subjects = [subject_schema.dump(subject) for subject in teacher.subjects]
+    if teacher:
+        subjects = [subject_schema.dump(subject) for subject in teacher.subjects]
 
-    # Create a list to store subject details including rooms and times
-    subjects_with_details = []
+        subjects_with_details = []
 
-    for subject in subjects:
-        subject_id = subject['id']
-        bookings = Booking.query.filter_by(subject_id=subject_id).options(
-            joinedload(Booking.room),
-            joinedload(Booking.time_slot)
-        ).order_by(
-            asc(Booking.time_slot_id) # sort bookings by time
-        ).all()
+        for subject in subjects:
+            subject_id = subject['id']
+            bookings = Booking.query.filter_by(subject_id=subject_id).options(
+                joinedload(Booking.room),
+                joinedload(Booking.time_slot)
+            ).order_by(
+                asc(Booking.time_slot_id) # sort bookings by time
+            ).all()
 
-        # Create a list to store booking details
-        bookings_details = []
-        for booking in bookings:
-            booking_details = {
-                "id": booking.id,
-                "room": {
-                    "building_number": booking.room.building_number,
-                    "room_number": booking.room.room_number
-                },
-                "time_slot": {
-                    "time_slot_day": booking.time_slot.time_slot_day,
-                    "time_slot_time": booking.time_slot.time_slot_time
+            # Create a list to store booking details
+            bookings_details = []
+            for booking in bookings:
+                booking_details = {
+                    "id": booking.id,
+                    "room": {
+                        "building_number": booking.room.building_number,
+                        "room_number": booking.room.room_number
+                    },
+                    "time_slot": {
+                        "time_slot_day": booking.time_slot.time_slot_day,
+                        "time_slot_time": booking.time_slot.time_slot_time
+                    }
                 }
+                bookings_details.append(booking_details)
+
+            # Append subject details along with bookings details
+            subject_with_details = {
+                "id": subject['id'],
+                "subject_year": subject['subject_year'],
+                "subject_name": subject['subject_name'],
+                "bookings": bookings_details
             }
-            bookings_details.append(booking_details)
+            subjects_with_details.append(subject_with_details)
 
-        # Append subject details along with bookings details
-        subject_with_details = {
-            "id": subject['id'],
-            "subject_year": subject['subject_year'],
-            "subject_name": subject['subject_name'],
-            "bookings": bookings_details
-        }
-        subjects_with_details.append(subject_with_details)
-
-    return jsonify({
-        "teacher": teacher_schema.dump(teacher),
-        "Assigned to subjects": subjects_with_details
-    })
+        return jsonify({
+            "teacher": teacher_schema.dump(teacher),
+            "Assigned to subjects": subjects_with_details
+        })
+    else:
+        return {"error": f"Teacher ID:{teacher_id} not found"}, 404
 
     
-# create teacher (admin only) - POST # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
+# Adds a new teacher. Requires admin auth. Teacher details required in the body request
 @teachers_bp.route('/', methods=['POST'])
+@jwt_required()
+@check_admin
 def add_teacher():
     body_data = teacher_schema.load(request.get_json())
 
@@ -85,11 +92,12 @@ def add_teacher():
         "teacher": teacher_schema.dump(teacher)
      }), 201
 
-# delete teacher (admin only) - DELETE # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
+# Deletes a teacher. Requires admin auth. Teacher_id required in dynamic route
 @teachers_bp.route('/<int:teacher_id>', methods=['DELETE'])
+@jwt_required()
+@check_admin
 def delete_teacher(teacher_id):
-    stmt = db.select(Teacher).where(Teacher.id == teacher_id)
-    teacher = db.session.scalar(stmt)
+    teacher = Teacher.query.get(teacher_id)
 
     if teacher:
         db.session.delete(teacher)
@@ -98,23 +106,28 @@ def delete_teacher(teacher_id):
     else:
         return {'error': f'Teacher ID:{teacher_id} not found'}, 404
 
-# edit teacher (admin only) - PUT, PATCH # ADD IN ADMIN ACCESS ONLY!!!!!!!!!!!!
+# Updates an existing teacher. Requires admin auth. Teacher_id required in dynamic route. Teacher details required in the body request 
 @teachers_bp.route('/<int:teacher_id>', methods=['PUT', 'PATCH'])
+@jwt_required()
+@check_admin
 def update_teacher(teacher_id):
     body_data = teacher_schema.load(request.get_json(), partial=True)
-    stmt = db.select(Teacher).filter_by(id=teacher_id)
-    teacher = db.session.scalar(stmt)
-
-    success_message = f"Teacher '{teacher.teacher_name}' updated successfully!"
+    teacher = Teacher.query.get(teacher_id)
 
     if teacher:
+        # The teacher exists, so update the attributes if they are provided in the request
         teacher.teacher_name = body_data.get('teacher_name') or teacher.teacher_name
         db.session.commit()
+
+        # Construct the success message after the update
+        success_message = f"Teacher '{teacher.teacher_name}' updated successfully!"
+
         return jsonify({
             "message": success_message,
             "teacher": teacher_schema.dump(teacher)
         })
     else:
+        # The teacher doesn't exist, return the custom error message
         return {'error': f'Teacher ID:{teacher_id} not found'}, 404
 
 

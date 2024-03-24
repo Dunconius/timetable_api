@@ -3,6 +3,10 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import asc
 from sqlalchemy.exc import IntegrityError
 
+#bits for admin authorization
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from controllers.auth_utils import check_admin
+
 from init import db
 
 from models.booking import Booking, booking_schema, bookings_schema
@@ -12,7 +16,7 @@ from models.time_slot import TimeSlot, time_slot_schema, time_slots_schema, time
 
 bookings_bp = Blueprint('bookings', __name__, url_prefix='/bookings')
 
-# get ALL bookings - GET (booking, subject, room, timeslot)
+# Gets all bookings sorted by booking_id, and returns the booking_id, subject_id, room_id, and timeslot_id
 @bookings_bp.route('/', methods=['GET'])
 def get_all_bookings():
     # Query all bookings and order them by booking_id
@@ -27,26 +31,29 @@ def get_all_bookings():
 
     return jsonify({'bookings': serialized_bookings})
 
-# get ONE booking
+# Gets one booking and returns all the fields for the corresponding room, subject, and time_slot
 @bookings_bp.route('/<int:booking_id>')
 def get_one_booking(booking_id):
     booking = Booking.query.options(
         joinedload(Booking.room),  # Load data from the Room model
         joinedload(Booking.subject),  # Load data from the Subject model
         joinedload(Booking.time_slot)  # Load data from the TimeSlot model
-    ).get_or_404(booking_id)
-    #booking = Booking.query.get_or_404(booking_id)
-    #room = Room.query.get_or_404()
+    ).get(booking_id)
 
-    return {
-        "Booking ID": booking.id,
-        "Room": room_schema.dump(booking.room) if booking.room else None,
-        "Subject": subject_schema.dump(booking.subject) if booking.subject else None,
-        "TimeSlot": time_slot_schema.dump(booking.time_slot) if booking.time_slot else None
-    }
+    if booking:
+        return {
+            "Booking ID": booking.id,
+            "Room": room_schema.dump(booking.room) if booking.room else None,
+            "Subject": subject_schema.dump(booking.subject) if booking.subject else None,
+            "TimeSlot": time_slot_schema.dump(booking.time_slot) if booking.time_slot else None
+        }
+    else:
+        return {"error": f"Booking ID:{booking_id} not found"}, 404
 
-# ADD a booking
+# Adds a new booking entry. Requires admin auth. Booking details required in the body request
 @bookings_bp.route('/', methods=['POST'])
+@jwt_required()
+@check_admin
 def add_booking():
     body_data = booking_schema.load(request.get_json())
 
@@ -82,8 +89,10 @@ def add_booking():
 
     return jsonify(response_data), 201
 
-# DELETE a booking
+# Deletes a booking entry. Requires admin auth. Booking_id required in dynamic route
 @bookings_bp.route('/<int:booking_id>', methods=['DELETE'])
+@jwt_required()
+@check_admin
 def delete_booking(booking_id):
     stmt = db.select(Booking).where(Booking.id == booking_id)
     booking = db.session.scalar(stmt)
@@ -95,23 +104,10 @@ def delete_booking(booking_id):
     else:
         return {'error': f'Booking ID:{booking_id} not found'}, 404
 
-# UPDATE a booking
-# @bookings_bp.route('/<int:booking_id>', methods=['PUT', 'PATCH'])
-# def update_booking(booking_id):
-#     body_data = booking_schema.load(request.get_json(), partial=True)
-#     stmt = db.select(Booking).filter_by(id=booking_id)
-#     booking = db.session.scalar(stmt)
-
-#     if booking:
-#         booking.subject_id = body_data.get('subject_id') or booking.subject_id
-#         booking.room_id = body_data.get('room_id') or booking.room_id
-#         booking.time_slot_id = body_data.get('time_slot_id') or booking.time_slot_id
-#         db.session.commit()
-#         return booking_schema.dump(booking)
-#     else:
-#         return {'error': f'Booking ID:{booking_id} not found'}, 404
-    
+# Updates an existing booking entry. Requires admin auth. Booking_id required in dynamic route. Booking details required in the body request
 @bookings_bp.route('/<int:booking_id>', methods=['PUT', 'PATCH'])
+@jwt_required()
+@check_admin
 def update_booking(booking_id):
     body_data = booking_schema.load(request.get_json(), partial=True)
     stmt = db.select(Booking).filter_by(id=booking_id)

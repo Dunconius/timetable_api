@@ -1,5 +1,3 @@
-# CLI stands for command line interface (postgres commands)
-# commands for dropping tables and seeding the database
 from datetime import date
 
 from flask import Blueprint
@@ -13,7 +11,6 @@ from models.teacher import Teacher
 from models.time_slot import TimeSlot
 from models.user import User
 
-# now we create the blueprint
 db_commands = Blueprint('db', __name__)
 
 @db_commands.cli.command('create')
@@ -31,7 +28,7 @@ def drop_tables():
 @db_commands.cli.command('seed')
 def seed_tables():
     print("Seeding tables...")
-    # seeding tables that don't require foreign keys
+    # seeding tables that don't require foreign keys first
     users = [
         User(
             email="admin@email.com",

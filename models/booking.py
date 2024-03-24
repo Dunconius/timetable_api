@@ -1,6 +1,7 @@
 from marshmallow import fields, validates
 from marshmallow.validate import Length, And, Regexp, OneOf
 from marshmallow.exceptions import ValidationError
+from sqlalchemy.orm import joinedload
 
 from init import db, ma
 
@@ -33,15 +34,22 @@ class BookingSchema(ma.Schema):
     room_id = fields.Int(required=True)
     time_slot_id = fields.Int(required=True)
 
-    # # Define nested fields for related models
-    # room = fields.Nested('RoomSchema', only=('building_number', 'room_number'))
-    # subject = fields.Nested('SubjectSchema', only=('subject_year', 'subject_name'))
-    # time_slot = fields.Nested('TimeSlotSchema', only=('time_slot_day', 'time_slot_time'))
-
     class Meta:
         model = Booking
         include_fk = True  # Include foreign keys in the schema
 
+# Defines a booking schema with more user friendly data for use in nested objects
+class BookingNestedSchema(ma.Schema):
+    id = fields.Int()
+    building_number = fields.Str(attribute="room.building_number") 
+    room_number = fields.Str(attribute="room.room_number") 
+    subject_name = fields.Str(attribute="subject.subject_name")  
+    time_slot_day = fields.Str(attribute="time_slot.time_slot_day")  
+    time_slot_time = fields.Str(attribute="time_slot.time_slot_time")  
+
+booking_schema = BookingSchema()        
+
 # Create an instance of BookingSchema for single objects and multiple objects
 booking_schema = BookingSchema()
 bookings_schema = BookingSchema(many=True)
+booking_nested = BookingNestedSchema()

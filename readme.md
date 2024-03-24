@@ -65,6 +65,17 @@ Object-Relational Mapping (ORM) tools are designed to bridge the gap between  ob
 
 ## Document all endpoints for your API
 
+### Authorisation
+
+- Login: '/auth/login' GET
+  - This route registers a user into the session.
+  - It requires the users email and password in the body of the request.
+  - It returns the users email, a bearer token, and admin status.
+
+- Test: '/auth/test' GET
+  - This route is just a test route I made to check that the admin authentication function was working as intended.
+  - It requires a bearer token and returns a success message if the user is an admin.
+
 ### Cohorts
 
 - Get all cohorts: '/cohorts' GET
@@ -221,7 +232,7 @@ Object-Relational Mapping (ORM) tools are designed to bridge the gap between  ob
 
 ## An ERD for your API
 
-![ERD for timetabling API](./resources/ERD.jpg "ERD")
+![ERD for timetabling API](./readme/ERD.jpg "ERD")
 
 ## Detail any third party services that your app will use
 
