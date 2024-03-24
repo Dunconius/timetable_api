@@ -27,7 +27,7 @@ def get_all_bookings():
 
     return jsonify({'bookings': serialized_bookings})
 
-# get ONE booking MAKE THIS RETURN THE SUBJECT NAME, ROOM NUMBER, AND TIME INSTEAD OF IDs
+# get ONE booking
 @bookings_bp.route('/<int:booking_id>')
 def get_one_booking(booking_id):
     booking = Booking.query.options(

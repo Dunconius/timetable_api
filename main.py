@@ -45,6 +45,9 @@ def create_app():
     # importing from the controllers file. Registered the blueprint with the flask app instance
     from controllers.cli_controller import db_commands
     app.register_blueprint(db_commands)
+
+    from controllers.auth_controller import auth_bp
+    app.register_blueprint(auth_bp)
     
     from controllers.teacher_controller import teachers_bp
     app.register_blueprint(teachers_bp)
